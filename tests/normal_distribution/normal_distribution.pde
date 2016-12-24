@@ -14,6 +14,7 @@ void draw(){
   
   float num_x = (float) generator.nextGaussian();
   float num_y = (float) generator.nextGaussian();
+  
 
   float sd= 60;
   float mean_x = 320;
@@ -21,6 +22,8 @@ void draw(){
   
   float x = sd * num_x + mean_x;
   float y = sd * num_y + mean_y;
+  
+ 
   
   noStroke();
   fill(255,10);

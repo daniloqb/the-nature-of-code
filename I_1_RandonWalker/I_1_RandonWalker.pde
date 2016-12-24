@@ -1,47 +1,28 @@
+import java.util.*;
+
+
 class Walker{
- int x;
- int y;
+ float x;
+ float y;
+ Random generator;
  
  Walker(){
    x = width / 2;
    y = height / 2;
+   
+   generator = new Random();
  }
  
- void step(int targetX, int targetY){
-
-   float choice = random(1);
+ void step(){
+  
+   float num_x = (float) generator.nextGaussian();
+   float num_y = (float) generator.nextGaussian();
    
-   if (choice < 0.3){
-    if (x < targetX){
-      x++;
-    }
-    else{
-      x--;
-    }
+   
+   x += num_x;
+   y += num_y;
+   
     
-    if(y < targetY){
-      y++;
-    }
-    else{
-      y--;
-    }
-      
-   }
-   else if(choice < 0.6){
-     x++;
-   }
-   else if(choice < 0.7){
-    x--;
-   }
-   else if (choice < 0.8){
-     y++;
-   }
-   else if(choice < 0.9){
-     y--;
-   }
-     
-     
-   
  }
  
  void display(){
@@ -61,7 +42,7 @@ void setup(){
 
 
 void draw(){
-  w.step(mouseX, mouseY);
+  w.step();
   w.display();
   
 }
