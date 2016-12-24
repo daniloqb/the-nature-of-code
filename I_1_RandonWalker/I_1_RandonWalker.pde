@@ -7,22 +7,40 @@ class Walker{
    y = height / 2;
  }
  
- void step(){
+ void step(int targetX, int targetY){
 
    float choice = random(1);
    
-   if (choice < 0.4){
-     x++;
+   if (choice < 0.5){
+    if (x < targetX){
+      x++;
+    }
+    else{
+      x--;
+    }
+    
+    if(y < targetY){
+      y++;
+    }
+    else{
+      y--;
+    }
+      
    }
    else if(choice < 0.6){
-     x--;
+     x++;
    }
-   else if(choice < 0.8){
+   else if(choice < 0.7){
+    x--;
+   }
+   else if (choice < 0.8){
      y++;
    }
-   else{
-     y --;
+   else if(choice < 0.9){
+     y--;
    }
+     
+     
    
  }
  
@@ -35,6 +53,7 @@ class Walker{
 
 Walker w;
 
+
 void setup(){
   size(800,600);
   w = new Walker();
@@ -42,7 +61,7 @@ void setup(){
 
 
 void draw(){
-  w.step();
+  w.step(mouseX, mouseY);
   w.display();
   
 }
