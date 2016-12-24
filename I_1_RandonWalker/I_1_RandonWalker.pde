@@ -9,16 +9,22 @@ class Walker{
  
  void step(){
 
-   int step_x = int(random(3))-1;
-   int step_y = int(random(3))-1;
+   float choice = random(1);
    
-   x += step_x;
-   y += step_y;
-   
-   
-   
+   if (choice < 0.4){
+     x++;
    }
- 
+   else if(choice < 0.6){
+     x--;
+   }
+   else if(choice < 0.8){
+     y++;
+   }
+   else{
+     y --;
+   }
+   
+ }
  
  void display(){
    stroke(0);
