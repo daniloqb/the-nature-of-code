@@ -11,14 +11,18 @@ void setup(){
 
 
 void draw(){
-  float num = (float) generator.nextGaussian();
   
+  float num_x = (float) generator.nextGaussian();
+  float num_y = (float) generator.nextGaussian();
+
   float sd= 60;
-  float mean = 320;
+  float mean_x = 320;
+  float mean_y = 180;
   
-  float x = sd * num + mean;
+  float x = sd * num_x + mean_x;
+  float y = sd * num_y + mean_y;
   
   noStroke();
   fill(255,10);
-  ellipse(x,180,16,16);
+  ellipse(x,y,16,16);
 }
