@@ -11,7 +11,7 @@ class Walker{
 
    float choice = random(1);
    
-   if (choice < 0.5){
+   if (choice < 0.3){
     if (x < targetX){
       x++;
     }
