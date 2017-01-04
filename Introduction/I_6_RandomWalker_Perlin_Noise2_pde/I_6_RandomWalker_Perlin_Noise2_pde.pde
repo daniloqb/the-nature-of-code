@@ -19,10 +19,13 @@ class Walker{
  void step(){
   
 
-   x = map(noise(tx),0,1,0,width);
-   y = map(noise(ty),0,1,0,height);
+   float stepx = map(noise(tx),0,1,0,width);
+   float stepy = map(noise(ty),0,1,0,height);
    
-   tx += 0.01;
+   x += random(-stepx, stepx);
+   y += random(-stepy, stepy);
+   
+   tx +=0.01;
    ty += 0.01;
    
    
