@@ -1,12 +1,12 @@
 int x_margin = 216;
 int y_margin = 136;
 float t;
-int h,m,s;
+int d,h,m,s;
 
 World world;
 
 void setup(){
-  size(1880,1000);
+  size(1500,850);
  world = new World(10,10);
  frameRate(30);
 
@@ -31,6 +31,8 @@ void draw(){
     s = int(t % 60);
     m = int((t / 60) % 60);
     h = int(t / 3600);
+    d = h / 24;
+    h %= 24;
 }
   
   fill(0);
@@ -44,7 +46,7 @@ void draw(){
   text("Avg Size: " + world.getAvgSize(), width - x_margin,height - y_margin + 80);
   text("Reprodution Rate: " + world.getReprodutionRate(), width - x_margin,height - y_margin + 96);
   text("Mutation Rate: " + world.getMutationRate(), width - x_margin,height - y_margin + 112);
-  text("Time Passed: " + h +"h " + m + "m " + s +"s " , width - x_margin,height - y_margin + 128);
+  text("Time Passed: " + d +"d "+ h +"h " + m + "m " + s +"s " , width - x_margin,height - y_margin + 128);
 
 
  //<>//
