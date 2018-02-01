@@ -10,7 +10,7 @@ Vehicle avoid;
 PVector mouse_target = new PVector(mouseX, mouseY);
 
 void setup(){
-  size(1204,728);
+  size(1800,900);
   arrive  = new Vehicle(random(width), random(height));
   seek  = new Vehicle(random(width), random(height));
   flee  = new Vehicle(random(width), random(height));
@@ -26,8 +26,11 @@ void setup(){
   evasion.col = color(255,255,60);
   avoid.col = color(0,120,255);
   
-  arrive.max_speed = 8;
+  arrive.max_speed = 14;
+  avoid.max_speed = 14;
+  avoid.max_force = 0.5;
   
+
 
 }
 
@@ -38,16 +41,19 @@ void draw(){
    noFill();
    stroke(255,0,0);
    float r = 0.5 * ((arrive.max_speed*arrive.max_speed)/arrive.max_force);
+   //float r = 40;
    ellipse(mouse_target.x, mouse_target.y,r,r);
 
    pursuit.pursuit(seek);
-   pursuit.flee(flee.location);
+   pursuit.flee(vehicle.location);
    vehicle.seek(seek.location);
    vehicle.flee(flee.location);
    evasion.evade(flee);
-   arrive.arrive(flee.location);
-   avoid.avoid(mouse_target);
-
+   //arrive.arrive(flee.location);
+   avoid.avoid(mouse_target,r,40);
+   avoid.arrive(seek.location);
+    seek.avoid(mouse_target,r,40);
+   arrive.arrive(mouse_target);
    
    vehicle.update();
    seek.update();
@@ -67,12 +73,9 @@ void draw(){
    arrive.display();
    avoid.display();
    
-   float x = avoid.location.x + avoid.velocity.x*10;
-   float y = avoid.location.y + avoid.velocity.y*10;
+
    
-   noFill();
-   stroke(255,0,0);
-   ellipse(x,y,40,40);
+
 }
 
 void mouseClicked() {

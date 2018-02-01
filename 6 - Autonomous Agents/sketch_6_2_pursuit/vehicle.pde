@@ -6,6 +6,7 @@ class Vehicle{
   
   float r = 4;
   color col = color(255,0,255);
+
   
   float max_speed;
   float max_force;
@@ -13,7 +14,7 @@ class Vehicle{
   
   Vehicle(float x, float y){
     max_speed = 4;
-    max_force = 0.15;
+    max_force = 0.25;
     location = new PVector(x,y);
     velocity = new PVector(random(-max_speed, max_speed),random(-max_speed,max_speed));
     velocity.limit(max_speed);
@@ -50,12 +51,28 @@ class Vehicle{
   }
   
   
-  void avoid(PVector target){
+  void avoid(PVector target,float r1,float r2){
   
-    float d = PVector.dist(target,location);
-    if (d < 100){
-    
-    }
+   float act = velocity.mag();
+   PVector vel = velocity.copy();
+   vel.normalize();
+   
+   vel.mult( 0.5*((act*act)/max_force));
+
+   vel.add(location);
+   
+   stroke(255);
+   strokeWeight(10);
+   point(vel.x,vel.y);
+   strokeWeight(1);
+   
+   float d = PVector.dist(target,vel);
+
+   
+   if (d < (r1+r2)/2){
+     flee(target);
+   }
+   
   }
   
   void arrive(PVector target){
@@ -64,6 +81,7 @@ class Vehicle{
     float slowing_distance;
     float ramped_speed;
     float clipped_speed;
+   
     
     slowing_distance = 0.5*((max_speed*max_speed)/max_force);
     clipped_speed = max_speed;
