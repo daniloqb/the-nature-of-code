@@ -5,6 +5,8 @@ Vehicle pursuit;
 Vehicle evasion;
 Vehicle arrive;
 Vehicle avoid;
+Vehicle wander;
+
 
 
 PVector mouse_target = new PVector(mouseX, mouseY);
@@ -18,6 +20,7 @@ void setup(){
   evasion  = new Vehicle(width/2, height/2);
   vehicle = new Vehicle(width/2, height/2);
   avoid = new Vehicle(width/2, height/2);
+  wander = new Vehicle(width/2, height/2);
 
   arrive.col = color(255,60,0);
   seek.col = color(0,255,40);
@@ -25,10 +28,13 @@ void setup(){
   pursuit.col = color(255,255,255);
   evasion.col = color(255,255,60);
   avoid.col = color(0,120,255);
+  wander.col = color(100,100,100);
   
   arrive.max_speed = 14;
   avoid.max_speed = 14;
   avoid.max_force = 0.5;
+  //wander.max_speed = 6;
+  
   
 
 
@@ -49,11 +55,14 @@ void draw(){
    vehicle.seek(seek.location);
    vehicle.flee(flee.location);
    evasion.evade(flee);
+   evasion.pursuit(seek);
    //arrive.arrive(flee.location);
    avoid.avoid(mouse_target,r,40);
    avoid.arrive(seek.location);
     seek.avoid(mouse_target,r,40);
    arrive.arrive(mouse_target);
+   wander.wander();
+   
    
    vehicle.update();
    seek.update();
@@ -62,7 +71,7 @@ void draw(){
    pursuit.update();
    arrive.update();
    avoid.update();
- 
+   wander.update();
 
      
    seek.display();
@@ -72,6 +81,7 @@ void draw(){
    vehicle.display();
    arrive.display();
    avoid.display();
+   wander.display();
    
 
    

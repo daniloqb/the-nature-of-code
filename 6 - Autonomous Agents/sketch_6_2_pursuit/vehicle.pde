@@ -10,6 +10,7 @@ class Vehicle{
   
   float max_speed;
   float max_force;
+  float angle = 0;
   
   
   Vehicle(float x, float y){
@@ -51,6 +52,40 @@ class Vehicle{
   }
   
   
+  void wander(){
+    
+    float act = velocity.mag();
+    
+   float sight = 0.5*((act*act)/max_force);
+  //float sight = 100;
+   PVector vel = velocity.copy();
+  
+   vel.normalize().mult(sight);
+   //vel.mult( 0.5*((act*act)/max_force));
+   vel.add(location);
+   
+   boundaries();
+   
+
+   if(random(1) < 0.01){
+     angle = random(-PI,PI);
+   }
+   
+   float vx = cos(angle)*sight/2;
+   float vy = sin(angle) * sight/2;
+   
+   PVector future = new PVector(vx,vy);
+   future.add(vel);
+    
+   stroke(255);
+   strokeWeight(1);
+   line(location.x, location.y,vel.x,vel.y);
+   line(vel.x,vel.y, future.x,future.y);
+   ellipse(vel.x,vel.y,sight,sight);
+    
+    seek(future);
+  }
+  
   void avoid(PVector target,float r1,float r2){
   
    float act = velocity.mag();
@@ -60,6 +95,7 @@ class Vehicle{
    vel.mult( 0.5*((act*act)/max_force));
 
    vel.add(location);
+   
    
    stroke(255);
    strokeWeight(10);
@@ -79,7 +115,7 @@ class Vehicle{
     
     float distance;
     float slowing_distance;
-    float ramped_speed;
+    //float ramped_speed;
     float clipped_speed;
    
     
@@ -158,23 +194,27 @@ class Vehicle{
   
   
   void boundaries(){
-   if (location.x < 25){
+    
+   float slowing_distance = 0.5*((velocity.mag()*velocity.mag())/max_force);
+   
+   if (location.x < 25 + slowing_distance){
      PVector desired = new PVector(max_speed,velocity.y);
      PVector steer = PVector.sub(desired,velocity);
      steer.limit(max_force);
      applyForce(steer);
-  } else if (location.x > width -25){
+  } else if (location.x > width -  25 -slowing_distance){
      PVector desired = new PVector(-max_speed,velocity.y);
      PVector steer = PVector.sub(desired,velocity);
      steer.limit(max_force);
      applyForce(steer);
+
   }  
-     if (location.y < 25){
+     if (location.y < 25 +slowing_distance){
      PVector desired = new PVector(velocity.x,max_speed);
      PVector steer = PVector.sub(desired,velocity);
      steer.limit(max_force);
      applyForce(steer);
-  } else if (location.y > height -25){
+  } else if (location.y > height - 25 -slowing_distance){
      PVector desired = new PVector(velocity.x,-max_speed);
      PVector steer = PVector.sub(desired,velocity);
      steer.limit(max_force);
