@@ -197,24 +197,24 @@ class Vehicle{
     
    float slowing_distance = 0.5*((velocity.mag()*velocity.mag())/max_force);
    
-   if (location.x < 25 + slowing_distance){
+   if (location.x < slowing_distance){
      PVector desired = new PVector(max_speed,velocity.y);
      PVector steer = PVector.sub(desired,velocity);
      steer.limit(max_force);
      applyForce(steer);
-  } else if (location.x > width -  25 -slowing_distance){
+  } else if (location.x > width -slowing_distance){
      PVector desired = new PVector(-max_speed,velocity.y);
      PVector steer = PVector.sub(desired,velocity);
      steer.limit(max_force);
      applyForce(steer);
 
   }  
-     if (location.y < 25 +slowing_distance){
+     if (location.y < slowing_distance){
      PVector desired = new PVector(velocity.x,max_speed);
      PVector steer = PVector.sub(desired,velocity);
      steer.limit(max_force);
      applyForce(steer);
-  } else if (location.y > height - 25 -slowing_distance){
+  } else if (location.y > height  -slowing_distance){
      PVector desired = new PVector(velocity.x,-max_speed);
      PVector steer = PVector.sub(desired,velocity);
      steer.limit(max_force);

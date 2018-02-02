@@ -12,7 +12,7 @@ Vehicle wander;
 PVector mouse_target = new PVector(mouseX, mouseY);
 
 void setup(){
-  size(1800,900);
+  size(1024,768);
   arrive  = new Vehicle(random(width), random(height));
   seek  = new Vehicle(random(width), random(height));
   flee  = new Vehicle(random(width), random(height));
@@ -51,15 +51,14 @@ void draw(){
    ellipse(mouse_target.x, mouse_target.y,r,r);
 
    pursuit.pursuit(seek);
-   pursuit.flee(vehicle.location);
+   pursuit.avoid(mouse_target,r,40);
    vehicle.seek(seek.location);
    vehicle.flee(flee.location);
    evasion.evade(flee);
    evasion.pursuit(seek);
+  
    //arrive.arrive(flee.location);
    avoid.avoid(mouse_target,r,40);
-   avoid.arrive(seek.location);
-    seek.avoid(mouse_target,r,40);
    arrive.arrive(mouse_target);
    wander.wander();
    
