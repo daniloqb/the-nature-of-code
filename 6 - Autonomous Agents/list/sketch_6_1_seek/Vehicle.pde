@@ -82,8 +82,15 @@ void display(){
   
 }
 
-void wander(){
-  
-}
+  void seek(PVector target){
+    PVector desired = PVector.sub(target,location);
+    desired.setMag(max_speed);
+    
+    PVector steer = PVector.sub(desired,velocity);
+    steer.setMag(max_force);
+    
+    applyForce(steer);
+    
+  }
   
 }
