@@ -125,14 +125,15 @@ PVector steer(PVector location_,PVector target_, PVector velocity_){
   }
   
   void pursuit2(PVector target, PVector target_velocity){
-  
+    
     PVector distance = PVector.sub(target,location);
     float d = distance.mag();  
    // PVector dif = PVector.sub(velocity,target_velocity);
     PVector dif = PVector.sub(target_velocity,velocity);
-    float factor = d/dif.mag();
+    dif.normalize();
+   // float factor = d/dif.mag();
     
-    //float factor = d;
+    float factor = d / max_speed;
     dif.mult(factor);
     
     PVector future_location = target_velocity.copy();    
@@ -142,6 +143,7 @@ PVector steer(PVector location_,PVector target_, PVector velocity_){
     
     
     seek(future_location);
+
   
   }
   

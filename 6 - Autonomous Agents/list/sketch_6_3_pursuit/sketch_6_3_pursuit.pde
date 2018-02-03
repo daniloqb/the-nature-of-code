@@ -25,7 +25,7 @@ void setup(){
  // vehicle.velocity = new PVector(-1,0);
  // pursuit.velocity = new PVector(0,4);
  // pursuit.max_speed = 4;
-  vehicle.max_speed = 6;
+  vehicle.max_speed = 4;
   
   vehicle.col = color(255,255,255);
   pursuit.col = color(255,0,0);
