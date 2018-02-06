@@ -158,8 +158,10 @@ PVector steer(PVector location_,PVector target_, PVector velocity_){
      PVector desired = PVector.sub(ahead,mouse_target);
     desired.setMag(max_speed);
     
+    float d = desired.mag();
+    
     force = PVector.sub(desired,velocity);
-    float f = map(r1,0,max_radius,0,max_force);
+    float f = map(d,0,threshold,max_force,0);
     force.setMag(f);
 
     
@@ -167,9 +169,9 @@ PVector steer(PVector location_,PVector target_, PVector velocity_){
      applyForce(force);
 
        noFill();
-  //// ellipseMode(RADIUS);
-  // stroke(255,255,0);
-  // ellipse(location.x, location.y,r1*2,r1*2);
+  // ellipseMode(RADIUS);
+   stroke(255,255,0);
+   ellipse(location.x, location.y,r1*2,r1*2);
    stroke(255,0,255);
    ellipse(mouse_target.x, mouse_target.y,r2*2,r2*2);
    stroke(255);

@@ -7,6 +7,8 @@ float r;
 PVector mouse_target;
  PVector point_target;
 
+
+
 void setup(){
  
   size(1024,768);
@@ -14,6 +16,7 @@ void setup(){
   mouse_target = new PVector(width/2, height/2);
   
   point_target = new PVector(width/2 + 150, height/2);  
+
   vehicle = new Vehicle(new PVector(0,height/2));
 
   
@@ -25,6 +28,7 @@ void draw(){
   background(0);
 
   vehicle.seekAndAvoid(point_target);
+    vehicle.seekAndAvoid(point_target2);
   vehicle.update();
 //display_mouse_target();
    
