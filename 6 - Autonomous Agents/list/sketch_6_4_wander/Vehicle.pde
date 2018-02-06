@@ -172,12 +172,12 @@ PVector steer(PVector location_,PVector target_, PVector velocity_){
    future.add(vel);
    seek(future);
    
-   noFill();
-   stroke(255);
-   strokeWeight(1);
-   line(location.x, location.y,vel.x,vel.y);
-   line(vel.x,vel.y, future.x,future.y);
-   ellipse(vel.x,vel.y,sight*2,sight*2);
+   //noFill();
+   //stroke(255);
+   //strokeWeight(1);
+   //line(location.x, location.y,vel.x,vel.y);
+   //line(vel.x,vel.y, future.x,future.y);
+   //ellipse(vel.x,vel.y,sight*2,sight*2);
     
  
   }

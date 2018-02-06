@@ -27,7 +27,7 @@ void draw(){
  //  vehicle.avoid2(mouse_target,50,100);
   
    vehicle.seekAndAvoid(seek.location);
- //  vehicle.avoid3(mouse_target);
+ //vehicle.avoid3(mouse_target);
  //  seek.wander();
    seek.update();
 
