@@ -4,7 +4,7 @@ PVector mouse_target;
 PVector point_target = new PVector(width/2, height/2);  
 
 void setup(){
-  size(800,600);
+  size(1900,980);
   
   mouse_target = new PVector(mouseX, mouseY);
   vehicles = new ArrayList<Vehicle>();
@@ -27,4 +27,11 @@ void draw(){
    v.update();
   }
   
+}
+
+
+void mouseClicked(){
+ 
+ for (int i = 0; i < 100; i++) 
+  vehicles.add(new Vehicle(new PVector(mouseX, mouseY)));
 }
