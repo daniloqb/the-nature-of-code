@@ -16,6 +16,14 @@ class Path{
  }
  
  
+   PVector getStart() {
+     return points.get(0);
+  }
+
+  PVector getEnd() {
+     return points.get(points.size()-1);
+}
+ 
  void display(){
   noFill();
    strokeWeight(radius * 2);

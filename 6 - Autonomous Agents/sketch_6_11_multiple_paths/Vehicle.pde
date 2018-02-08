@@ -45,7 +45,7 @@ class Vehicle {
     location.add(velocity);
     acceleration.mult(0);
 
-    boundaries();
+   // boundaries();
 
     display();
   }
@@ -375,37 +375,43 @@ class Vehicle {
 
   void folow_path(Path path) {
 
-    PVector target = null;
-    PVector normalPoint = null;
-    float distance = 0;
-    float worldRecord = 1000000;
-    
     PVector predict = velocity.copy();
     predict.normalize();
-    predict.mult(25);
+    predict.mult(10);
     PVector predictLoc = PVector.add(location, predict);
+
+    PVector target = null;
+    PVector normal = null;
+    
+   
+    float worldRecord = 1000000;
+    
+
     
     for (int i = 0; i < path.points.size()-1; i++) {
       PVector a = path.points.get(i);
       PVector b = path.points.get(i+1);
-      normalPoint = getNormalPoint(predictLoc, a, b);
+      
+      PVector normalPoint = getNormalPoint(predictLoc, a, b);
        if (normalPoint.x < a.x || normalPoint.x > b.x) {
-    normalPoint = b.copy();
-  }
-         distance = PVector.dist(predictLoc,normalPoint);
-    print(i + " " +distance + " " + normalPoint);
-    
-    if (distance < worldRecord){
-      worldRecord = distance;
-      target = normalPoint.get();
-  }
+         normalPoint = b.copy();
+       }
+       float distance = PVector.dist(predictLoc,normalPoint);
+       if (distance < worldRecord){
+          worldRecord = distance;
+         // normal = normalPoint;
+          
+          PVector dir = PVector.sub(b,a);
+          dir.normalize();
+          dir.mult(10);
+          target = normalPoint.copy();
+          target.add(dir);
+        }
     }
-    println();println();
-
-  
-   if (distance > path.radius){
-   seek(normalPoint);
- }
+    
+   if (worldRecord > path.radius){
+     seek(target);
+   }
   }
 
   PVector getNormalPoint(PVector p, PVector a, PVector b) {
@@ -420,17 +426,11 @@ class Vehicle {
   }
 
 
-  void boundaries_pass() {
+  void borders(Path p) {
 
-    if (location.x < 0) {
-      location.x =  width;
-    } else if (location.x > width) {
-      location.x = 0;
-    }
-    if (location.y < 0) {
-      location.y =  height;
-    } else if (location.y > height) {
-      location.y = 0;
+    if (location.x > p.getEnd().x + r){
+      location.x = p.getStart().x -r;
+      location.y = p.getStart().y + location.y - p.getEnd().y;
     }
   }
 }
