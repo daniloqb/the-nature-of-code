@@ -12,7 +12,7 @@ class Particle {
   float maxforce;
 
   int mode;
-
+  float safe_radius;
   float scan_radius;
   boolean scan_on;
   float wander_angle;
@@ -46,6 +46,7 @@ class Particle {
 
     mode = 0;
 
+    safe_radius = pow(size, 3);
     scan_radius = 50;
     scan_on = false;
     wander_angle = 0;
@@ -54,30 +55,40 @@ class Particle {
   }
 
   void run() {
-    apply_behariors();
+boundaries_pass();
     update();
     display();
-    display_scan();
+    
   }
 
-/*
+  /*
 * APPLY A FORCE TO PARTICLE
-*/
+   */
 
   void apply_force(PVector force) {
     acceleration.add(force);
     //  acceleration.limit(maxforce);
   }
-  
+
   /*
   * APPLY COMBINED FORCES TO PARTICLE
-  */
+   */
 
-  void apply_behariors() {
+  void apply_behaviors(ArrayList<Particle> particles) {
+
+    PVector align_force = align(particles);
+    PVector separate_force = separate(particles);
+    PVector cohesion_force = cohesion(particles);
+
+    align_force.mult(0.5);
+    separate_force.mult(1.5);
+    cohesion_force.mult(0.5);
+
+    apply_force(align_force);
+    apply_force(separate_force);
+    apply_force(cohesion_force);
+
     
-  //  test_arrive();
-   
-    boundaries_pass();
   }
 
   void update() {
@@ -85,6 +96,7 @@ class Particle {
     velocity.limit(maxspeed);
     position.add(velocity);
     acceleration.mult(0);
+   // display_scan();
   }
 
   void display() {
@@ -101,6 +113,23 @@ class Particle {
     vertex(size, size*2);
     endShape(CLOSE);
     //   ellipse(0, 0, size*2, size*2);
+
+    popMatrix();
+  }
+    void display02() {
+    float angle = velocity.heading() +PI/2;  
+    fill(col);
+    noStroke();
+
+    pushMatrix();
+    translate(position.x, position.y);
+    //rotate(angle);
+    //beginShape();
+    //vertex(0, -size*2);
+    //vertex(-size, size*2);
+    //vertex(size, size*2);
+    //endShape(CLOSE);
+    ellipse(0, 0, size*2, size*2);
 
     popMatrix();
   }
@@ -161,7 +190,7 @@ class Particle {
     return force;
   }
 
-  PVector seek(PVector target,boolean scan) {
+  PVector seek(PVector target, boolean scan) {
     if (scan) {
       float dist = PVector.dist(position, target);
       if (dist > scan_radius) {
@@ -229,194 +258,197 @@ class Particle {
     PVector future = new PVector(vx, vy);
     future.add(current_speed);
     //return seek(future); 
-    //if (debug) {
-    //  noFill();
-    //  stroke(255);
-    //  strokeWeight(1);
-    //  line(position.x, position.y, current_speed.x, current_speed.y);
-    //  line(current_speed.x, current_speed.y, future.x, future.y);
-    //  ellipseMode(RADIUS);
-    //  ellipse(current_speed.x, current_speed.y, scan_radius, scan_radius);
-    //}
+    if (debug) {
+      noFill();
+      stroke(255);
+      strokeWeight(1);
+      line(position.x, position.y, current_speed.x, current_speed.y);
+      line(current_speed.x, current_speed.y, future.x, future.y);
+      ellipseMode(RADIUS);
+      ellipse(current_speed.x, current_speed.y, scan_radius, scan_radius);
+    }
     //apply_force(seek(future));
     return seek(future, false);
-  }
-  
+    
+    
+}
+
   /*
   *   ARRIVE BEHAVIOR
-  */
-  
-   PVector arrive(PVector target, boolean scan){
-    
+   */
+
+  PVector arrive(PVector target, boolean scan) {
+
     float distance;
     float slowing_distance;
     float clipped_speed;
-    
+
     slowing_distance = 0.5*((maxspeed*maxspeed)/maxforce);
     clipped_speed = maxspeed;
-    
+
     if (scan) {
       float dist = PVector.dist(position, target);
       if (dist > scan_radius) {
         return new PVector(0, 0);
       }
     }
-    
+
     PVector desired = PVector.sub(target, position);
     distance = desired.mag();
-    
-    if (distance < slowing_distance){
-      clipped_speed = map(distance,slowing_distance,0,maxspeed,0);
+
+    if (distance < slowing_distance) {
+      clipped_speed = map(distance, slowing_distance, 0, maxspeed, 0);
     } 
-    
+
     // This part is the steer funcion.
     desired.setMag(clipped_speed);
-    PVector steer = PVector.sub(desired,velocity);
+    PVector steer = PVector.sub(desired, velocity);
     steer.limit(maxforce);
     return steer;
   }
-  
-  PVector arrive(Particle target, boolean scan){
-    
+
+  PVector arrive(Particle target, boolean scan) {
+
     float distance;
     float slowing_distance;
     float clipped_speed;
-    
+
     slowing_distance = 0.5*((maxspeed*maxspeed)/maxforce);
     clipped_speed = maxspeed;
-    
+
     if (scan) {
       float dist = PVector.dist(position, target.position);
       if (dist > scan_radius) {
         return new PVector(0, 0);
       }
     }
-    
+
     PVector desired = PVector.sub(target.position, position);
     distance = desired.mag();
-    
-    if (distance < slowing_distance){
-      clipped_speed = map(distance,slowing_distance,0,maxspeed,0);
+
+    if (distance < slowing_distance) {
+      clipped_speed = map(distance, slowing_distance, 0, maxspeed, 0);
     } 
-    
+
     // This part is the steer funcion.
     desired.setMag(clipped_speed);
-    PVector steer = PVector.sub(desired,velocity);
+    PVector steer = PVector.sub(desired, velocity);
     steer.limit(maxforce);
     return steer;
   }
-  
+
   /*
   * PURSUIT BEHAVIOR
-  */
-  
-   PVector pursuit(Particle target, boolean scan){
-  
-    PVector distance = PVector.sub(target.position,position);
+   */
+
+  PVector pursuit(Particle target, boolean scan) {
+
+    PVector distance = PVector.sub(target.position, position);
     float d = distance.mag();  
-    PVector dif = PVector.sub(velocity,target.velocity);
+    PVector dif = PVector.sub(velocity, target.velocity);
     float factor = d/dif.mag();
     //float factor = d/velocity.mag();
-    
-    
+
+
     PVector future_location = target.velocity.copy();    
     future_location.mult(factor);
     future_location.add(target.position);
-    
-    return seek(future_location,scan);
+
+    return seek(future_location, scan);
   }
-  
+
   /*
   * EVADE BEHAVIOR
-  */
-  
-  PVector evade(Particle target, boolean scan){
-  
-    PVector distance = PVector.sub(target.position,position);
+   */
+
+  PVector evade(Particle target, boolean scan) {
+
+    PVector distance = PVector.sub(target.position, position);
     float d = distance.mag();  
-    PVector dif = PVector.sub(velocity,target.velocity);
+    PVector dif = PVector.sub(velocity, target.velocity);
     float factor = d/dif.mag();
     //float factor = d/velocity.mag();
-    
-    
+
+
     PVector future_location = target.velocity.copy();    
     future_location.mult(factor);
     future_location.add(target.position);
-    
-     return flee(future_location,scan);
+
+    return flee(future_location, scan);
   }
-  
-  
-   PVector rendezvou(Particle target, boolean scan){
-  
-    PVector distance = PVector.sub(target.position,position);
+
+
+  PVector rendezvou(Particle target, boolean scan) {
+
+    PVector distance = PVector.sub(target.position, position);
     float d = distance.mag();  
-   // PVector dif = PVector.sub(velocity,target_velocity);
-    PVector dif = PVector.sub(target.velocity,velocity);
+    // PVector dif = PVector.sub(velocity,target_velocity);
+    PVector dif = PVector.sub(target.velocity, velocity);
     dif.normalize();
-   // float factor = d/dif.mag();
-    
+    // float factor = d/dif.mag();
+
     float factor = d;
     dif.mult(factor);
-    
+
     PVector future_location = target.velocity.copy();    
     //future_location.mult(factor);
     future_location.add(dif);
     future_location.add(target.position);
-    
-    return seek(future_location,scan);
+
+    return seek(future_location, scan);
   }
-  
+
   /*
   *  AVOID BEHAVIOR
-  */
-  
-  PVector avoid(PVector target) {
+   */
+
+  PVector avoid(PVector target, float rad) {
 
     float current_speed = velocity.mag();
     // float lookahead = 40;
     //float lookahead = max_speed;
     float lookahead = 0.5*((current_speed*current_speed)/maxforce);
- 
+
     PVector ahead = velocity.copy().normalize();
     ahead.mult(lookahead);
     ahead.add(position);
 
     PVector distance = PVector.sub(target, ahead);
     float d_mag = distance.mag();
-    float r1 = size * size;
-    float r2 = 50;
+    float r1 = safe_radius;
+    float r2 = rad;
     float threshold = r1 + r2;
     float diff = threshold - d_mag;
-    
-     noFill();
-    ellipseMode(CENTER);
-    stroke(255, 255, 0);
-    ellipse(position.x, position.y, r1*2, r1*2);
-    stroke(255, 0, 255);
-    ellipse(target.x, target.y, r2*2, r2*2);
-    stroke(255);
-    line(position.x, position.y, ahead.x, ahead.y);
 
+    if (debug) {
+      noFill();
+      ellipseMode(CENTER);
+      stroke(255, 255, 0);
+      ellipse(position.x, position.y, r1*2, r1*2);
+      stroke(255, 0, 255);
+      ellipse(target.x, target.y, r2*2, r2*2);
+      stroke(255);
+      line(position.x, position.y, ahead.x, ahead.y);
+    }
     if (diff > 0) {
       //print(d_mag + " ");
       //println("vai batter"); 
       // // velocity.mult(0);
-       distance.normalize();
+      distance.normalize();
 
 
-       distance.mult(diff);
-       distance.limit(maxforce);
+      distance.mult(diff);
+      distance.limit(maxforce);
 
-       velocity = PVector.sub(velocity,distance);
-     //  velocity.normalize();
-       velocity.limit(maxspeed);
+      velocity = PVector.sub(velocity, distance);
+      //  velocity.normalize();
+      velocity.limit(maxspeed);
 
       PVector force = steer(ahead, target, velocity);
       force.mult(-1);
       return force;
     } else {
-      
+
       distance = PVector.sub(target, position);
       d_mag = distance.mag();
       diff = threshold - d_mag;
@@ -425,62 +457,149 @@ class Particle {
         force.mult(-1);
         return force;
       } else {
-        return new PVector(0,0);
+        return new PVector(0, 0);
       }
-
     }
-
   }
-  
-  
-  
+
+
+
   /*
 *   TESTES 
-*/
+   */
 
-void test_arrive(){
-  PVector arrive_force = arrive(new PVector(mouseX,mouseY), false);
-  PVector wander_force = wander();
-   
-   if (arrive_force.mag() > 0){
-     wander_force.mult(0);
-   }
-   
-   apply_force(wander_force);
-   apply_force(arrive_force);
-   
-   
-  float r =  0.5*((maxspeed*maxspeed)/maxforce);
-  noFill();
-  stroke(255,0,0);
-  ellipseMode(CENTER);
-  ellipse(mouseX, mouseY, r,r);
-   
-}
+  void test_arrive() {
+    PVector arrive_force = arrive(new PVector(mouseX, mouseY), false);
+    PVector wander_force = wander();
 
-//void test_01(){
-//  PVector seek_force = seek(new PVector(mouseX,mouseY), true);
-//  PVector wander_force = wander();
-   
-//   if (seek_force.mag() > 0){
-//     wander_force.mult(0);
-//   }
-   
-//   apply_force(wander_force);
-//   apply_force(seek_force);
-//}
+    if (arrive_force.mag() > 0) {
+      wander_force.mult(0);
+    }
 
-//void test_01(){
-//  PVector flee_force = flee(new PVector(mouseX,mouseY), true);
-//  PVector wander_force = wander();
-   
-//   if (flee_force.mag() > 0){
-//     wander_force.mult(0);
-//   }
-   
-//   apply_force(wander_force);
-//   apply_force(flee_force);
-//}
-  
-  
+    apply_force(wander_force);
+    apply_force(arrive_force);
+
+
+    float r =  0.5*((maxspeed*maxspeed)/maxforce);
+    noFill();
+    stroke(255, 0, 0);
+    ellipseMode(CENTER);
+    ellipse(mouseX, mouseY, r, r);
+  }
+
+
+  PVector separate(ArrayList<Particle> v) {
+
+    PVector sum = new PVector();
+    PVector steer = new PVector(0, 0);
+    int count = 0;
+
+    for (Particle other : v) {
+      float d = PVector.dist(position, other.position);
+
+      if (d > 0 && d < safe_radius) {
+        PVector diff = PVector.sub(position, other.position);
+        diff.normalize();
+        diff.div(d);
+        sum.add(diff);
+        count++;
+      }
+    }
+
+    if (count > 0) {
+      sum.div(count);
+      sum.normalize();
+      sum.mult(maxspeed);
+
+      steer =  PVector.sub(sum, velocity);
+      steer.limit(maxforce);
+    }
+    return steer;
+  }
+
+  /*
+* COMPLEX SYSTEMS
+   */
+
+  PVector align(ArrayList<Particle> v) {
+
+    PVector sum = new PVector();
+    PVector steer = new PVector(0, 0);
+    int count = 0;
+
+    for (Particle other : v) {
+      float d = PVector.dist(position, other.position);
+
+      if (d > 0 && d < scan_radius) {
+        sum.add(other.velocity);
+        count++;
+      }
+    }
+
+    if (count > 0) {
+      sum.div(count);
+      sum.normalize();
+      sum.mult(maxspeed);
+
+      steer =  PVector.sub(sum, velocity);
+      steer.limit(maxforce);
+    }
+    return steer;
+  }
+
+  PVector cohesion(ArrayList<Particle> v) {
+
+    PVector sum = new PVector();
+    PVector steer = new PVector(0, 0);
+    int count = 0;
+
+    for (Particle other : v) {
+      float d = PVector.dist(position, other.position);
+
+      if (d > 0 && d < scan_radius) {
+
+        PVector diff = PVector.sub(other.position, position);
+        sum.add(diff);
+        count++;
+      }
+    }
+
+    if (count > 0) {
+      sum.div(count);
+      sum.normalize();
+      sum.mult(maxspeed);
+
+      steer =  PVector.sub(sum, velocity);
+      steer.limit(maxforce);
+    }
+    return steer;
+  }
+
+
+
+
+
+  //void test_01(){
+  //  PVector seek_force = seek(new PVector(mouseX,mouseY), true);
+  //  PVector wander_force = wander();
+
+  //   if (seek_force.mag() > 0){
+  //     wander_force.mult(0);
+  //   }
+
+  //   apply_force(wander_force);
+  //   apply_force(seek_force);
+  //}
+
+  //void test_01(){
+  //  PVector flee_force = flee(new PVector(mouseX,mouseY), true);
+  //  PVector wander_force = wander();
+
+  //   if (flee_force.mag() > 0){
+  //     wander_force.mult(0);
+  //   }
+
+  //   apply_force(wander_force);
+  //   apply_force(flee_force);
+  //}
 }
