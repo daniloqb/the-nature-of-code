@@ -39,18 +39,18 @@ void newPath(){
   //path.addPoint(random(width/2, width), random(0, height));
   //path.addPoint(width+20, height/2);
   
-  //path.addPoint(0,height/2);
-  //path.addPoint(width/2,height/2);
-  //path.addPoint(width,height/4);
+  path.addPoint(0,height/2);
+  path.addPoint(width/2,height/2);
+  path.addPoint(width,height/4);
   
-  float w = width / 50;
+ // float w = width / 50;
   
-  for (int i = 0; i < 51; i++){
-    float v = i * w;
-   float angle = map(v,0,width,0,TWO_PI*3); 
+ // for (int i = 0; i < 51; i++){
+ //   float v = i * w;
+ //  float angle = map(v,0,width,0,TWO_PI*3); 
    
-   path.addPoint(v,sin(angle+z)*100 + height/2);
-  }
- // z += 0.01;
+ //  path.addPoint(v,sin(angle+z)*100 + height/2);
+ // }
+ //// z += 0.01;
   
 }

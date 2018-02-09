@@ -394,7 +394,9 @@ class Vehicle {
       
       PVector normalPoint = getNormalPoint(predictLoc, a, b);
        if (normalPoint.x < a.x || normalPoint.x > b.x) {
-         normalPoint = b.copy();
+         
+normalPoint = b.copy();
+
        }
        float distance = PVector.dist(predictLoc,normalPoint);
        if (distance < worldRecord){

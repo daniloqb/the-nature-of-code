@@ -13,8 +13,8 @@ class Vehicle{
   Vehicle(PVector l){
      r = 3;
      wander_angle = 0;
-     max_speed = 4;
-     max_force = 0.25;
+     max_speed = 2;
+     max_force = 0.15;
      location = l;
      velocity = new PVector(random(-max_speed, max_speed),random(-max_speed,max_speed));
      acceleration = new PVector(0,0);

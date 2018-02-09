@@ -4,13 +4,14 @@ PVector mouse_target;
 PVector point_target = new PVector(width/2, height/2);  
 
 void setup(){
-  size(1900,980);
+  size(1024,768);
   
   mouse_target = new PVector(mouseX, mouseY);
   vehicles = new ArrayList<Vehicle>();
   
   for (int i =0; i < 100; i++){
-   vehicles.add( new Vehicle( new PVector( random(width),random(height))));    
+   vehicles.add( new Vehicle( new PVector( random(width),random(height))));  
+   
   }
 }
 
